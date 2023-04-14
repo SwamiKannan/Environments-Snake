@@ -4,11 +4,6 @@ from score import ScoreBoard
 import time
 from food import Food, SCREEN_WIDTH, SCREEN_HEIGHT
 
-# import random
-import sys
-
-print(sys.version)
-
 
 def clean_screen():
     screen = Screen()
@@ -20,11 +15,17 @@ def clean_screen():
     return screen
 
 
-# time.sleep(10)
+try:
+    with open('high_score.txt', 'rb') as f:
+        inter = str(f.read(), 'utf-8')
+        print('inter:', inter)
+        high_score = int(inter)
+        print(type(inter))
+        print(inter)
+except FileNotFoundError:
+    high_score = 0
 
-
-high_score = 0
-
+screen = Screen()
 new_game = True
 while new_game:
     screen = clean_screen()
@@ -54,6 +55,8 @@ while new_game:
             score1.score += score1.feed_score
         else:
             score1.score += score1.time_score
+    with open('high_score.txt', 'wb') as f:
+        f.write(bytearray(str(high_score), 'utf-8'))
     wrong_input = True
     while wrong_input:
         replay = screen.textinput('Play Game', 'Would you like to play a new game? Y/N')
@@ -61,6 +64,11 @@ while new_game:
         if replay is None or replay.lower() == 'n':
             print('Thanks for playing !')
             wrong_input = False
+            new_game = False
+            screen.clearscreen()
+            del snake1
+            del score1
+            del food1
             break
         elif replay.lower() == 'y':
             screen.clearscreen()
@@ -74,10 +82,5 @@ while new_game:
 
 print('Tada !')
 
-# TODO 4: Add random food pints
-
-# TODO: 4. Define how score increases
-
-
-# TODO 5. Define how game ends (wall or body collision)
 screen.exitonclick()
+del screen
